@@ -13,6 +13,15 @@ using namespace std;
 //creates inital edges between two nodes
 void createEdges(char nodeOne, char nodeTwo, map<char, Node*> nodeMap);
 
+//simulate edge failure
+void edgeFailure(char nodeOne, char nodeTwo, map<char, Node*> nodeMap);
+
+//simulate node failure
+//void nodeFailure(char node, map<char, Node*> nodeMap);
+
+//restore failed node
+//void nodeRestore(char node, map<char, Node*> nodeMap);
+
 //checks if two nodes are connected
 bool connected(char nodeOne, char nodeTwo, map<char, Node*> nodeMap);
 
@@ -55,35 +64,68 @@ int main(int argc, char const *argv[])
 	createEdges('A', 'D', nodeMap);
 	createEdges('A', 'E', nodeMap);
 	createEdges('A', 'G', nodeMap);
-	createEdges('B', 'J', nodeMap);
+	createEdges('B', 'C', nodeMap);
 	createEdges('C', 'D', nodeMap);
 	createEdges('D', 'E', nodeMap);
 	createEdges('D', 'F', nodeMap);
 	createEdges('E', 'F', nodeMap);
 	createEdges('E', 'H', nodeMap);
-	createEdges('E', 'K', nodeMap);
+	createEdges('E', 'J', nodeMap);
 	createEdges('F', 'G', nodeMap);
 	createEdges('G', 'H', nodeMap);
 	createEdges('G', 'I', nodeMap);
 	createEdges('H', 'I', nodeMap);
 	createEdges('H', 'J', nodeMap);
-	createEdges('H', 'K', nodeMap);
 	createEdges('I', 'J', nodeMap);
 
 	//begin simulation
 	int i = 0;
+	char nodeChoice;
+	cout << "****Simple edge and node failure test****" << endl << endl;
 	cout << "Finding path from node A to J" << endl;
 	sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
 	i++;
 
-	cout << "Edge failure from B to J" << endl;
-	edgeFailure('B', 'J', nodeMap);
+	cout << "Simulating Edge failure from E to J..." << endl;
+	edgeFailure('E', 'J', nodeMap);
 
-	cout << "Finding new path from node A to J" << endl;
-	sendRequest(nodeMap, 'A', i, 'J') << endl;
+	cout << "Finding new path from node A to J..." << endl;
+	sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
 	i++;
 
-	//TODO: more simulation steps
+	cout << "Restoring failed Edge..." << endl;
+	createEdges('E', 'J', nodeMap);
+
+	cout << "Choose a node to fail: ";
+	cin >> nodeChoice;
+	//nodeFailure(nodeChoice, nodeMap);
+
+	cout << "Finding new path from node A to J..." <<endl;
+	sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
+	i++;
+
+	cout << "Restoring failed node..." << endl;
+	//nodeRestore(nodeChoice, nodeMap);
+
+
+	cout << "****Finished simple tests****" << endl << endl;
+	cout << "****Begin random node failure test while routing****" << endl << endl;
+
+	for (int j = 0; j < 10; ++j)
+	{
+		failedNode1 = Node[rand() % NUM_NODES];
+		failedNode2 = Node[rand() % NUM_NODES];
+		//nodeFailure(failedNode1, nodeMap);
+		//nodeFailure(failedNode2, nodeMap);
+
+		cout << "Random failure test " << j << "..." << endl;
+		sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
+		i++;
+		//nodeRestore(failedNode1, nodeMap);
+		//nodeRestore(failedNode2, nodeMap);
+	}
+
+	cout << "****Finished random node failure test****" << endl << endl;
 
 	return 0;
 }
@@ -112,6 +154,10 @@ void edgeFailure(char nodeOne, char nodeTwo, map<char, Node*> nodeMap)
 
 
 //simulate node failure
+//TODO
+
+
+//restore failed nodes
 //TODO
 
 

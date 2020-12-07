@@ -21,17 +21,25 @@ class Node{
             char name;
             bool pathCheck;
             bool replyCheck;
+
+            string requestString;
+            string replyString;
+
+            vector<checkRequest> prerequest;
             map<char, Node*> nodeNeighbor;
+
             void setNeighbor(map < char, Node *> neighbors);
             void addNeighbor(char name, Node * location);
             void removeNeighbor(char name);
+            void getReply(char src, char dst, string requestReply, int size, char replySource);
 
             bool neighborCheck(char name);
             
 };
 
-struct checkRREQ{
-    char 
+struct checkRequest{
+    char requestSource;
+    int idRequest;
 };
 
 Node::Node(char nodeChar, map < char, Node *> neighbors){
@@ -69,7 +77,11 @@ bool neighborCheck(char name){
     else return false;
 }
 
+void getReply(char src, char dst, string requestReply, int size, char replySource){
+
+}
 
 
-///////////////////////https://github.com/Kripash/CPE400/blob/master///////////////////////////////////////////
-// ^^^^^^^ link for the github project I'm referring to
+
+
+}

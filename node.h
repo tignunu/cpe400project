@@ -78,10 +78,32 @@ bool neighborCheck(char name){
 }
 
 void getReply(char src, char dst, string requestReply, int size, char replySource){
+    if(size == 0){
+        cout << "Node" << name << "recieved path to" << replySource "." << endl;
+        cout << "Route taken: " << requestReply << replySource << endl;
+    } else if(size == (requestReply.size()-1)){
+        cout << "Node" << name << "recieved reply from" << replySource "." << endl;
+        cout << "Route taken: " << requestReply << replySource << endl;
+    } else if(size != requestReply.size()){
+        cout << "Node" << name << "recieved reply from" << replySource "." << endl;
+        cout << "Route taken: " << requestReply << replySource << endl;
+    } else
 
+    replyCheck = true;
+    map<char, Node*>::iterator find_iterator;
+    Node * postNode = NULL;
+    
+    if(size - 1) >= 0){
+        if (size != 0){
+            getIterator = nodeNeighbor.find(requestReply[size - 1]);
+        }
+        postNode = getIterator -> second;
+    }
+
+    if(postNode != NULL){
+        postNode -> replyString = requestReply;
+        postNode -> getReply(postNode -> name, dst, requestReply, size -1, replySource);
+    }
 }
-
-
-
 
 }

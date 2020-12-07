@@ -57,7 +57,7 @@ int main(int argc, char const *argv[])
 	//create edges between nodes
 	createEdges('A', 'B', nodeMap);
 	createEdges('A', 'D', nodeMap);
-	createEdges('A', 'E', nodeMap);
+	createEdges('A', 'C', nodeMap);
 	createEdges('A', 'G', nodeMap);
 	createEdges('B', 'C', nodeMap);
 	createEdges('C', 'D', nodeMap);
@@ -75,43 +75,31 @@ int main(int argc, char const *argv[])
 
 	//begin simulation
 	int i = 0;
-	char nodeChoice;
-	cout << "****Simple edge failure test****" << endl << endl;
-	cout << "Finding path from node A to J" << endl;
-	sendRequest(nodeMap, 'A', i, 'J', Nodes);
-	i++;
+	cout << "**************Begin random node failure test while routing**************" << endl;
 
-	cout << "Simulating Edge failure from E to J..." << endl;
-	edgeFailure('E', 'J', nodeMap);
-
-	cout << "Finding new path from node A to J..." << endl;
-	sendRequest(nodeMap, 'A', i, 'J', Nodes);
-	i++;
-
-	cout << "Restoring failed Edge..." << endl;
-	createEdges('E', 'J', nodeMap);
-
-
-	cout << "Finding new path from node A to J..." <<endl;
-	sendRequest(nodeMap, 'A', i, 'J', Nodes);
-	i++;
-
-	cout << "****Finished simple tests****" << endl << endl;
-	cout << "****Begin random node failure test while routing****" << endl << endl;
-
-	for (int j = 0; j < 5; ++j)
+	for (int j = 1; j < 6; ++j)
 	{
+		int seed = time(NULL);
+		srand(seed);
 		char failedNode1 = Nodes[rand() % NUM_NODES];
 		char failedNode2 = Nodes[rand() % NUM_NODES];
+		char failedNode3 = Nodes[rand() % NUM_NODES];
+		char failedNode4 = Nodes[rand() % NUM_NODES];
 		edgeFailure(failedNode1, failedNode2, nodeMap);
+		edgeFailure(failedNode3, failedNode4, nodeMap);
+		edgeFailure(failedNode1, failedNode3, nodeMap);
+		edgeFailure(failedNode2, failedNode4, nodeMap);
 
-		cout << "Random failure test " << j << "..." << endl;
+		cout << endl << "Random failure test " << j << "..." << endl;
 		sendRequest(nodeMap, 'A', i, 'J', Nodes);
 		i++;
 		createEdges(failedNode1, failedNode2, nodeMap);
+		createEdges(failedNode3, failedNode4, nodeMap);
+		createEdges(failedNode1, failedNode3, nodeMap);
+		createEdges(failedNode2, failedNode4, nodeMap);
 	}
 
-	cout << "****Finished random node failure test****" << endl << endl;
+	cout << "**************Finished random node failure test**************" << endl << endl;
 
 	return 0;
 }
@@ -190,16 +178,17 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 						if(neighbor_node->name == dst)
 						{ 
 						//found dst!
-							cout 	<< "Node " << neighbor_node->name << " received a RREQ from Node " << currentNode->name
-									<< " to get to this node! So, begin RREP ["
+							cout 	<< "Node " << neighbor_node->name << " received a request from Node " << currentNode->name
+									<< " to get to this node! So, begin reply ["
 									<< (neighbor_node->requestString + neighbor_node->name) << "]" << endl;
 							//now, begin journey back to RREQ originator by starting RREP
 							neighbor_node->getReply(dst, src, neighbor_node->requestString, (neighbor_node->requestString).size(), dst);
+							//success = true;
 						}
 						else
 						{
 						//did not find, so neighbor_node will now ask its neighbors
-							cout	<< "Node " << neighbor_node->name << " received a RREQ from Node " << currentNode->name
+							cout	<< "Node " << neighbor_node->name << " received a request from Node " << currentNode->name
 									<< " to get to Node " << dst << ", list of identifiers: " << neighbor_node->requestString << endl;
 						}
 					}
@@ -222,7 +211,7 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 		if(difftime(time(0), start) > 1.0)
 		{
 			Node * verify = nodePtr(src, nodeMap);
-			if(!verify->replyCheck)
+			if(verify->name != src)
 			{
 				cout << "No route could be found from Node " << src << " to Node " << dst << endl;
 			}

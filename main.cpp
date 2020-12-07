@@ -53,8 +53,8 @@ int main(int argc, char const *argv[])
 	//create edges between nodes
 	createEdges('A', 'B', nodeMap);
 	createEdges('A', 'D', nodeMap);
+	createEdges('A', 'E', nodeMap);
 	createEdges('A', 'G', nodeMap);
-	createEdges('A', 'I', nodeMap);
 	createEdges('B', 'J', nodeMap);
 	createEdges('C', 'D', nodeMap);
 	createEdges('D', 'E', nodeMap);
@@ -69,6 +69,21 @@ int main(int argc, char const *argv[])
 	createEdges('H', 'J', nodeMap);
 	createEdges('H', 'K', nodeMap);
 	createEdges('I', 'J', nodeMap);
+
+	//begin simulation
+	int i = 0;
+	cout << "Finding path from node A to J" << endl;
+	sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
+	i++;
+
+	cout << "Edge failure from B to J" << endl;
+	edgeFailure('B', 'J', nodeMap);
+
+	cout << "Finding new path from node A to J" << endl;
+	sendRequest(nodeMap, 'A', i, 'J') << endl;
+	i++;
+
+	//TODO: more simulation steps
 
 	return 0;
 }

@@ -86,13 +86,13 @@ Node *nodePtr(char node, map<char, Node*> nodeMap){
 
 void Node::getReply(char src, char dst, string requestReply, int size, char replySource){
     if(size == 0){
-        cout << "Node" << name << "recieved path to" << replySource << "." << endl;
+        cout << "Node " << name << " recieved path to " << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
     } else if(size == (requestReply.size()-1)){
-        cout << "Node" << name << "recieved reply from" << replySource << "." << endl;
+        cout << "Node " << name << " recieved reply from " << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
     } else if(size != requestReply.size()){
-        cout << "Node" << name << "recieved reply from" << replySource << "." << endl;
+        cout << "Node " << name << " recieved reply from " << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
     } else
 

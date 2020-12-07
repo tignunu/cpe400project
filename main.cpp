@@ -99,7 +99,7 @@ int main(int argc, char const *argv[])
 		createEdges(failedNode2, failedNode4, nodeMap);
 	}
 
-	cout << "**************Finished random node failure test**************" << endl << endl;
+	cout << endl << "**************Finished random node failure test**************" << endl << endl;
 
 	return 0;
 }
@@ -140,6 +140,7 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 	time_t start = time(0);
 	Node * currentNode = nodePtr(src, nodeMap);
 	currentNode->pathCheck = true;
+	bool success = false;
 	
 	//currentNode refers to current node being traversed
 	//originator refers to where RREQ was started
@@ -183,13 +184,14 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 									<< (neighbor_node->requestString + neighbor_node->name) << "]" << endl;
 							//now, begin journey back to RREQ originator by starting RREP
 							neighbor_node->getReply(dst, src, neighbor_node->requestString, (neighbor_node->requestString).size(), dst);
-							//success = true;
+							success = true;
 						}
 						else
 						{
 						//did not find, so neighbor_node will now ask its neighbors
 							cout	<< "Node " << neighbor_node->name << " received a request from Node " << currentNode->name
 									<< " to get to Node " << dst << ", list of identifiers: " << neighbor_node->requestString << endl;
+									success = false;
 						}
 					}
 					//add neighbor_node to queue, to forward RREQ
@@ -210,10 +212,11 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 		//no response after 1.0 seconds means dst isn't in network
 		if(difftime(time(0), start) > 1.0)
 		{
-			Node * verify = nodePtr(src, nodeMap);
-			if(verify->name != src)
+			//Node * verify = nodePtr(src, nodeMap);
+			if(!success)//currentNode->name != dst)
 			{
 				cout << "No route could be found from Node " << src << " to Node " << dst << endl;
+				cout << "(Too many edges down)" << endl;
 			}
 			break;
 		}

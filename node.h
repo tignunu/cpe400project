@@ -12,6 +12,11 @@
 
 using namespace std;
 
+struct checkRequest{
+    char requestSource;
+    int idRequest;
+};
+
 class Node{
     public:
             Node(char nodeChar, map < char, Node *> neighbors);
@@ -37,10 +42,6 @@ class Node{
             
 };
 
-struct checkRequest{
-    char requestSource;
-    int idRequest;
-};
 
 Node::Node(char nodeChar, map < char, Node *> neighbors){
     name = nodeChar;
@@ -50,18 +51,18 @@ Node::Node(char nodeChar, map < char, Node *> neighbors){
 }
 
 
-Node::Node& operator = (const Node& other){
-    if(this == &rhs) return * this;
+Node &Node::operator = (const Node& other){
+    if(this == &other) return * this;
     return * this;
 }
 
-Node::Node * location(){
+Node *Node::location(){
     return this;
 }
 
 
 void Node::setNeighbor(map < char, Node *> neighbors){
-    nodeNeighbor = neighbor;
+    nodeNeighbor = neighbors;
 }
 
 void Node::addNeighbor(char name, Node * location){
@@ -72,31 +73,31 @@ void Node::removeNeighbor(char name){
     nodeNeighbor.erase(name);
 }
 
-bool neighborCheck(char name){
+bool Node::neighborCheck(char name){
     if(nodeNeighbor.count(name) > 0) return true;
     else return false;
 }
 
 Node *nodePtr(char node, map<char, Node*> nodeMap){
-    map<char, Node*>::iterator find = nodemap.find(node);
+    map<char, Node*>::iterator find = nodeMap.find(node);
     return (find->second);
 }
 
 
-void getReply(char src, char dst, string requestReply, int size, char replySource){
+void Node::getReply(char src, char dst, string requestReply, int size, char replySource){
     if(size == 0){
-        cout << "Node" << name << "recieved path to" << replySource "." << endl;
+        cout << "Node" << name << "recieved path to" << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
     } else if(size == (requestReply.size()-1)){
-        cout << "Node" << name << "recieved reply from" << replySource "." << endl;
+        cout << "Node" << name << "recieved reply from" << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
     } else if(size != requestReply.size()){
-        cout << "Node" << name << "recieved reply from" << replySource "." << endl;
+        cout << "Node" << name << "recieved reply from" << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
     } else
 
     replyCheck = true;
-    map<char, Node*>::iterator find_iterator;
+    map<char, Node*>::iterator getIterator;
     Node * postNode = NULL;
     
     if((size - 1) >= 0){

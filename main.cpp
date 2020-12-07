@@ -4,6 +4,7 @@
 //Mari Trombley, Skylar Glock, Henry Strum
 
 #include "Node.h"
+#include <stdlib.h>
 //#include <time.h>
 
 #define NUM_NODES 10
@@ -48,16 +49,16 @@ int main(int argc, char const *argv[])
 	Node				J('J', nothing);
 
 	//define map
-	nodeMap.insert(pair<char, Node*>('A', A.memory_location()));
-	nodeMap.insert(pair<char, Node*>('B', B.memory_location()));
-	nodeMap.insert(pair<char, Node*>('C', C.memory_location()));
-	nodeMap.insert(pair<char, Node*>('D', D.memory_location()));
-	nodeMap.insert(pair<char, Node*>('E', E.memory_location()));
-	nodeMap.insert(pair<char, Node*>('F', F.memory_location()));
-	nodeMap.insert(pair<char, Node*>('G', G.memory_location()));
-	nodeMap.insert(pair<char, Node*>('H', H.memory_location()));
-	nodeMap.insert(pair<char, Node*>('I', I.memory_location()));
-	nodeMap.insert(pair<char, Node*>('J', J.memory_location()));
+	nodeMap.insert(pair<char, Node*>('A', A.location()));
+	nodeMap.insert(pair<char, Node*>('B', B.location()));
+	nodeMap.insert(pair<char, Node*>('C', C.location()));
+	nodeMap.insert(pair<char, Node*>('D', D.location()));
+	nodeMap.insert(pair<char, Node*>('E', E.location()));
+	nodeMap.insert(pair<char, Node*>('F', F.location()));
+	nodeMap.insert(pair<char, Node*>('G', G.location()));
+	nodeMap.insert(pair<char, Node*>('H', H.location()));
+	nodeMap.insert(pair<char, Node*>('I', I.location()));
+	nodeMap.insert(pair<char, Node*>('J', J.location()));
 
 	//create edges between nodes
 	createEdges('A', 'B', nodeMap);
@@ -83,14 +84,14 @@ int main(int argc, char const *argv[])
 	char nodeChoice;
 	cout << "****Simple edge and node failure test****" << endl << endl;
 	cout << "Finding path from node A to J" << endl;
-	sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
+	sendRequest(nodeMap, 'A', i, 'J', Nodes);
 	i++;
 
 	cout << "Simulating Edge failure from E to J..." << endl;
 	edgeFailure('E', 'J', nodeMap);
 
 	cout << "Finding new path from node A to J..." << endl;
-	sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
+	sendRequest(nodeMap, 'A', i, 'J', Nodes);
 	i++;
 
 	cout << "Restoring failed Edge..." << endl;
@@ -101,7 +102,7 @@ int main(int argc, char const *argv[])
 	//nodeFailure(nodeChoice, nodeMap);
 
 	cout << "Finding new path from node A to J..." <<endl;
-	sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
+	sendRequest(nodeMap, 'A', i, 'J', Nodes);
 	i++;
 
 	cout << "Restoring failed node..." << endl;
@@ -113,13 +114,13 @@ int main(int argc, char const *argv[])
 
 	for (int j = 0; j < 10; ++j)
 	{
-		failedNode1 = Node[rand() % NUM_NODES];
-		failedNode2 = Node[rand() % NUM_NODES];
+		char failedNode1 = Nodes[rand() % NUM_NODES];
+		char failedNode2 = Nodes[rand() % NUM_NODES];
 		//nodeFailure(failedNode1, nodeMap);
 		//nodeFailure(failedNode2, nodeMap);
 
 		cout << "Random failure test " << j << "..." << endl;
-		sendRequest(nodeMap, 'A', i, 'J', Nodes[]);
+		sendRequest(nodeMap, 'A', i, 'J', Nodes);
 		i++;
 		//nodeRestore(failedNode1, nodeMap);
 		//nodeRestore(failedNode2, nodeMap);
@@ -134,8 +135,8 @@ int main(int argc, char const *argv[])
 //creates inital edges between two nodes
 void createEdges(char nodeOne, char nodeTwo, map<char, Node*> nodeMap)
 {
-	Node *nodeOnePtr = node_ptr(nodeOne, nodeMap);
-	Node *nodeTwoPtr = node_ptr(nodeTwo, nodeMap);
+	Node *nodeOnePtr = nodePtr(nodeOne, nodeMap);
+	Node *nodeTwoPtr = nodePtr(nodeTwo, nodeMap);
 
 	nodeOnePtr->addNeighbor(nodeTwo, nodeTwoPtr);
 	nodeTwoPtr->addNeighbor(nodeOne, nodeOnePtr);
@@ -145,11 +146,11 @@ void createEdges(char nodeOne, char nodeTwo, map<char, Node*> nodeMap)
 //simulate edge failure
 void edgeFailure(char nodeOne, char nodeTwo, map<char, Node*> nodeMap)
 {
-	Node *nodeOnePtr = node_ptr(nodeOne, nodeMap);
-	Node *nodeTwoPtr = node_ptr(nodeTwo, nodeMap);
+	Node *nodeOnePtr = nodePtr(nodeOne, nodeMap);
+	Node *nodeTwoPtr = nodePtr(nodeTwo, nodeMap);
 
-	nodeOnePtr->deleteNeighbor(nodeTwo, nodeTwoPtr);
-	nodeTwoPtr->deleteNeighbor(nodeOne, nodeOnePtr);
+	nodeOnePtr->removeNeighbor(nodeTwo);
+	nodeTwoPtr->removeNeighbor(nodeOne);
 }
 
 
@@ -164,9 +165,5 @@ void edgeFailure(char nodeOne, char nodeTwo, map<char, Node*> nodeMap)
 //checks if two nodes are connected
 bool connected(char nodeOne, char nodeTwo, map<char, Node*> nodeMap)
 {
-	return pointer_for_node(first_node, nodeMap)->am_I_connected(second_node);
+	return nodePtr(nodeOne, nodeMap)->neighborCheck(nodeTwo);
 }
-
-
-//chooses which edges/nodes to simulate failure on (Needed?)
-//TODO

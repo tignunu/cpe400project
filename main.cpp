@@ -10,22 +10,14 @@
 
 using namespace std;
 
-//sends request out to find path
-void sendRequest(map<char, Node*> nodeMap, char source, int requestNum, char destination, char Nodes[]);
-
 //creates inital edges between two nodes
 void createEdges(char nodeOne, char nodeTwo, map<char, Node*> nodeMap);
 
 //checks if two nodes are connected
 bool connected(char nodeOne, char nodeTwo, map<char, Node*> nodeMap);
 
-//node pointer function (move this to node.h)////////////////////////////////
-Node *nodePtr(char node, map<char, Node*> nodeMap)
-{
-	map<char, Node*>::iterator find = nodemap.find(node);
-	return (find->second);
-}
-/////////////////////////////////////////////////////////////////////////////
+//sends request out to find path
+void sendRequest(map<char, Node*> nodeMap, char source, int requestNum, char destination, char Nodes[]);
 
 
 int main(int argc, char const *argv[])
@@ -63,7 +55,7 @@ int main(int argc, char const *argv[])
 	createEdges('A', 'D', nodeMap);
 	createEdges('A', 'G', nodeMap);
 	createEdges('A', 'I', nodeMap);
-	createEdges('B', 'C', nodeMap);
+	createEdges('B', 'J', nodeMap);
 	createEdges('C', 'D', nodeMap);
 	createEdges('D', 'E', nodeMap);
 	createEdges('D', 'F', nodeMap);

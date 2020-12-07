@@ -77,6 +77,12 @@ bool neighborCheck(char name){
     else return false;
 }
 
+Node *nodePtr(char node, map<char, Node*> nodeMap){
+    map<char, Node*>::iterator find = nodemap.find(node);
+    return (find->second);
+}
+
+
 void getReply(char src, char dst, string requestReply, int size, char replySource){
     if(size == 0){
         cout << "Node" << name << "recieved path to" << replySource "." << endl;
@@ -93,7 +99,7 @@ void getReply(char src, char dst, string requestReply, int size, char replySourc
     map<char, Node*>::iterator find_iterator;
     Node * postNode = NULL;
     
-    if(size - 1) >= 0){
+    if((size - 1) >= 0){
         if (size != 0){
             getIterator = nodeNeighbor.find(requestReply[size - 1]);
         }
@@ -104,6 +110,4 @@ void getReply(char src, char dst, string requestReply, int size, char replySourc
         postNode -> replyString = requestReply;
         postNode -> getReply(postNode -> name, dst, requestReply, size -1, replySource);
     }
-}
-
 }

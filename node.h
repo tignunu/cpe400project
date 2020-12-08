@@ -85,17 +85,22 @@ Node *nodePtr(char node, map<char, Node*> nodeMap){
 
 
 void Node::getReply(char src, char dst, string requestReply, int size, char replySource){
+    //start by telling the user the path was found
+    //if the source was the destination
     if(size == 0){
         cout << "Node " << name << " recieved path to " << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
+    //if the source was next to the destination
     } else if(size == (requestReply.size()-1)){
         cout << "Node " << name << " recieved reply from " << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
+    //if the source was more than one away from the destination
     } else if(size != requestReply.size()){
         cout << "Node " << name << " recieved reply from " << replySource << "." << endl;
         cout << "Route taken: " << requestReply << replySource << endl;
     } else
 
+    //now follow path back to source node to return message
     replyCheck = true;
     map<char, Node*>::iterator getIterator;
     Node * postNode = NULL;

@@ -144,20 +144,20 @@ bool connected(char nodeOne, char nodeTwo, map<char, Node*> nodeMap)
 
 void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, char Nodes[])
 {
-//this simulates an RREQ message
+//this simulates an RREQ style message
 	time_t start = time(0);
 	Node * currentNode = nodePtr(src, nodeMap);
 	currentNode->pathCheck = true;
 	bool success = false;
 	
 	//currentNode refers to current node being traversed
-	//originator refers to where RREQ was started
+	//originator refers to where sendRequest was started
 	
 	vector<char> neighborVec;
 	while(1)
 	{
 		bool alreadyChecked = true;
-		//did currentNode already ask its neighbors to check for (originator_of_RREQ, request_ID)? if so, ignore this RREQ
+		//did currentNode already ask its neighbors to check for the orginal request? if so, ignore this sendRequest
 		for(int i = 0; i < currentNode->prerequest.size(); i++)
 		{
 			if(	currentNode->prerequest[i].requestSource == src &&
@@ -166,49 +166,45 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 				alreadyChecked = false; //ignore
 			}
 		}
-		//no previous ask? so now currentNode will check its neighbors then and ask each of its neighbors
+		//if not previously asked the currentNode will check its neighbors then and ask each of its neighbors
 		if(alreadyChecked)
 		{
-			//save this RREQ to previous requests
+			//save this sendRequest to previous requests
 			checkRequest insert_record = {src, requestNum};
 			currentNode-> prerequest.push_back(insert_record);
-			//if currentNode is desired node, no need to ask neighbors
+			//if currentNode is desired node we have arrived and can skip this
 			if(currentNode->name != dst)
 			{
-				//for each of currentNode’s neighbors, ask RREQ
+				//for each of currentNode’s neighbors, ask sendRequest
 				for(map<char, Node*>::const_iterator i = currentNode->nodeNeighbor.begin(); i != currentNode->nodeNeighbor.end(); i++)
 				{
 					Node * neighbor = i->second;
 					if(neighbor->pathCheck == false)
 					{
-						//send neighbor current path taken from originator
+						//continue adding to the current path
 						neighbor->requestString = (currentNode->requestString + (currentNode->name));
 						neighbor->pathCheck = true;
 						if(neighbor->name == dst)
 						{ 
-						//found dst!
+						//if destination is found we have succeded
 							cout 	<< "Node " << neighbor->name << " has a request from Node " << currentNode->name
 									<< " to go there \n 	Reply: ["
 									<< (neighbor->requestString + neighbor->name) << "] \n" << endl;
-							//now, begin journey back to RREQ originator by starting RREP
+							//now, go back to sendRequest originator by starting RREP style message
 							neighbor->getReply(dst, src, neighbor->requestString, (neighbor->requestString).size(), dst);
 							success = true;
 						}
 						else
 						{
-						//did not find, so neighbor will now ask its neighbors
+						//did not find the destination so neighbor will now ask its neighbors
 							cout	<< "Node " << neighbor->name << " has a request from Node " << currentNode->name
 									 << " \n	Current Route: " << neighbor->requestString <<"\n" << endl;
 									success = false;
 						}
 					}
-					//add neighbor to queue, to forward RREQ
+					//add neighbor to queue, to forward sendRequest
 					neighborVec.push_back(i->first);
 				}
-			}
-			else
-			{
-				//do nothing
 			}
 		}
 		//update currentNode to next in queue
@@ -220,8 +216,8 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 		//no response after 1.0 seconds means dst isn't in network
 		if(difftime(time(0), start) > 1.0)
 		{
-			//Node * verify = nodePtr(src, nodeMap);
-			if(!success)//currentNode->name != dst)
+			//if unable to locate node in network inform user
+			if(!success) 
 			{
 				cout << "There is no possible route from Node " << src << " to Node " << dst << endl;
 				cout << "(Too many edges down)" << endl;

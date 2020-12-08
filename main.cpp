@@ -75,9 +75,11 @@ int main(int argc, char const *argv[])
 
 	//begin simulation
 	int i = 0;
-	cout << "**************Begin random node failure test while routing**************" << endl;
+	cout << "\n\n**************Begin random node failure test while routing**************" << endl;
 
-	for (int j = 1; j < 6; ++j)
+	cout<<"Finding path from node A to node J \n"<<endl; 
+
+	for (int j = 1; j < 4; ++j)
 	{
 		int seed = time(NULL);
 		srand(seed);
@@ -95,7 +97,7 @@ int main(int argc, char const *argv[])
 		cout << "Edge failure between " << failedNode1 << " and " << failedNode2 << endl;
 		cout << "Edge failure between " << failedNode3 << " and " << failedNode4 << endl;
 		cout << "Edge failure between " << failedNode1 << " and " << failedNode3 << endl;
-		cout << "Edge failure between " << failedNode2 << " and " << failedNode4 << endl;
+		cout << "Edge failure between " << failedNode2 << " and " << failedNode4 <<"\n" << endl;
 
 		sendRequest(nodeMap, 'A', i, 'J', Nodes);
 		i++;
@@ -151,7 +153,7 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 	//currentNode refers to current node being traversed
 	//originator refers to where RREQ was started
 	
-	vector<char> neighborVector;
+	vector<char> neighborVec;
 	while(1)
 	{
 		bool alreadyChecked = true;
@@ -176,32 +178,32 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 				//for each of currentNode’s neighbors, ask RREQ
 				for(map<char, Node*>::const_iterator i = currentNode->nodeNeighbor.begin(); i != currentNode->nodeNeighbor.end(); i++)
 				{
-					Node * neighbor_node = i->second;
-					if(neighbor_node->pathCheck == false)
+					Node * neighbor = i->second;
+					if(neighbor->pathCheck == false)
 					{
-						//send neighbor_node current path taken from originator
-						neighbor_node->requestString = (currentNode->requestString + (currentNode->name));
-						neighbor_node->pathCheck = true;
-						if(neighbor_node->name == dst)
+						//send neighbor current path taken from originator
+						neighbor->requestString = (currentNode->requestString + (currentNode->name));
+						neighbor->pathCheck = true;
+						if(neighbor->name == dst)
 						{ 
 						//found dst!
-							cout 	<< "Node " << neighbor_node->name << " received a request from Node " << currentNode->name
-									<< " to get to this node! So, begin reply ["
-									<< (neighbor_node->requestString + neighbor_node->name) << "]" << endl;
+							cout 	<< "Node " << neighbor->name << " has a request from Node " << currentNode->name
+									<< " to go there \n 	Reply: ["
+									<< (neighbor->requestString + neighbor->name) << "] \n" << endl;
 							//now, begin journey back to RREQ originator by starting RREP
-							neighbor_node->getReply(dst, src, neighbor_node->requestString, (neighbor_node->requestString).size(), dst);
+							neighbor->getReply(dst, src, neighbor->requestString, (neighbor->requestString).size(), dst);
 							success = true;
 						}
 						else
 						{
-						//did not find, so neighbor_node will now ask its neighbors
-							cout	<< "Node " << neighbor_node->name << " received a request from Node " << currentNode->name
-									<< " to get to Node " << dst << ", list of identifiers: " << neighbor_node->requestString << endl;
+						//did not find, so neighbor will now ask its neighbors
+							cout	<< "Node " << neighbor->name << " has a request from Node " << currentNode->name
+									 << " \n	Current Route: " << neighbor->requestString <<"\n" << endl;
 									success = false;
 						}
 					}
-					//add neighbor_node to queue, to forward RREQ
-					neighborVector.push_back(i->first);
+					//add neighbor to queue, to forward RREQ
+					neighborVec.push_back(i->first);
 				}
 			}
 			else
@@ -210,10 +212,10 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 			}
 		}
 		//update currentNode to next in queue
-		if(neighborVector.size() > 0)
+		if(neighborVec.size() > 0)
 		{
-			currentNode = nodePtr(neighborVector[0], nodeMap);
-			neighborVector.erase(neighborVector.begin());
+			currentNode = nodePtr(neighborVec[0], nodeMap);
+			neighborVec.erase(neighborVec.begin());
 		}
 		//no response after 1.0 seconds means dst isn't in network
 		if(difftime(time(0), start) > 1.0)
@@ -221,22 +223,22 @@ void sendRequest(map<char, Node*> nodeMap, char src, int requestNum, char dst, c
 			//Node * verify = nodePtr(src, nodeMap);
 			if(!success)//currentNode->name != dst)
 			{
-				cout << "No route could be found from Node " << src << " to Node " << dst << endl;
+				cout << "There is no possible route from Node " << src << " to Node " << dst << endl;
 				cout << "(Too many edges down)" << endl;
 			}
 			break;
 		}
 	}
 	//reset received
-	Node * reset_node = NULL;
+	Node * resetNode = NULL;
 	for(int i=0; i<NUM_NODES; i++)
-	{	reset_node = nodePtr(Nodes[i], nodeMap);
-		reset_node->pathCheck = false;
-		reset_node->replyString = "";
-		reset_node->requestString = "";
+	{	resetNode = nodePtr(Nodes[i], nodeMap);
+		resetNode->pathCheck = false;
+		resetNode->replyString = "";
+		resetNode->requestString = "";
 	}
-	Node * reset_source_node = nodePtr(src, nodeMap);
-	reset_source_node->replyCheck = false;
-	reset_source_node->replyString = "";
-	reset_source_node->requestString = "";
+	Node * resetSource = nodePtr(src, nodeMap);
+	resetSource->replyCheck = false;
+	resetSource->replyString = "";
+	resetSource->requestString = "";
 }

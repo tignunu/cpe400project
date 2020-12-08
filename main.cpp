@@ -90,7 +90,13 @@ int main(int argc, char const *argv[])
 		edgeFailure(failedNode1, failedNode3, nodeMap);
 		edgeFailure(failedNode2, failedNode4, nodeMap);
 
+
 		cout << endl << "Random failure test " << j << "..." << endl;
+		cout << "Edge failure between " << failedNode1 << " and " << failedNode2 << endl;
+		cout << "Edge failure between " << failedNode3 << " and " << failedNode4 << endl;
+		cout << "Edge failure between " << failedNode1 << " and " << failedNode3 << endl;
+		cout << "Edge failure between " << failedNode2 << " and " << failedNode4 << endl;
+
 		sendRequest(nodeMap, 'A', i, 'J', Nodes);
 		i++;
 		createEdges(failedNode1, failedNode2, nodeMap);

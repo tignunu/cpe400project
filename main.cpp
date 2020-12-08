@@ -79,7 +79,7 @@ int main(int argc, char const *argv[])
 
 	cout<<"Finding path from node A to node J \n"<<endl; 
 
-	for (int j = 1; j < 4; ++j)
+	for (int j = 1; j < 2; ++j)
 	{
 		int seed = time(NULL);
 		srand(seed);
@@ -93,7 +93,7 @@ int main(int argc, char const *argv[])
 		edgeFailure(failedNode2, failedNode4, nodeMap);
 
 
-		cout << endl << "Random failure test " << j << "..." << endl;
+		cout << endl << "Random failure test " << /*j <<*/ "..." << endl;
 		cout << "Edge failure between " << failedNode1 << " and " << failedNode2 << endl;
 		cout << "Edge failure between " << failedNode3 << " and " << failedNode4 << endl;
 		cout << "Edge failure between " << failedNode1 << " and " << failedNode3 << endl;
